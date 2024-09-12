@@ -1,0 +1,332 @@
+openapi: 3.0.0
+info:
+  title: User Management API
+  version: 1.0.0
+  description: RESTful API for managing users, including registration, authentication, password recovery, and CRUD operations.
+
+paths:
+  /users:
+    post:
+      summary: Register a new user
+      description: Registers a new user in the system.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: user123
+                email:
+                  type: string
+                  format: email
+                  example: user@example.com
+                password:
+                  type: string
+                  format: password
+                  example: P@ssw0rd!
+                phone:
+                  type: string
+                  example: +1234567890
+                birthdate:
+                  type: string
+                  format: date
+                  example: 1990-01-01
+                address:
+                  type: string
+                  example: 123 Main St, Springfield, USA
+              required:
+                - username
+                - email
+                - password
+                - phone
+                - birthdate
+      responses:
+        '201':
+          description: User created successfully.
+        '400':
+          description: Bad Request - Validation errors.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Email is required."
+                  errors:
+                    type: array
+                    items:
+                      type: string
+                      example: "Username must be at least 3 characters long."
+        '409':
+          description: Conflict - Email already exists.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Email already exists."
+        '500':
+          description: Internal server error.
+
+  /users/{id}:
+    get:
+      summary: Get user details
+      description: Returns information about a specific user by ID.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: User ID.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User details retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  username:
+                    type: string
+                  email:
+                    type: string
+                    format: email
+                  phone:
+                    type: string
+                  birthdate:
+                    type: string
+                    format: date
+                  address:
+                    type: string
+        '404':
+          description: User not found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "User with the specified ID not found."
+        '500':
+          description: Internal server error.
+
+    put:
+      summary: Update a user
+      description: Updates information for a specific user.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: User ID.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                phone:
+                  type: string
+                birthdate:
+                  type: string
+                  format: date
+                address:
+                  type: string
+                password:
+                  type: string
+                  format: password
+              required:
+                - username
+                - email
+                - phone
+                - birthdate
+      responses:
+        '200':
+          description: User updated successfully.
+        '400':
+          description: Bad Request - Validation errors.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid email format."
+                  errors:
+                    type: array
+                    items:
+                      type: string
+                      example: "Phone number is required."
+        '404':
+          description: User not found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "User with the specified ID not found."
+        '500':
+          description: Internal server error.
+
+    delete:
+      summary: Delete a user
+      description: Deletes a specific user from the system.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: User ID.
+          schema:
+            type: string
+      responses:
+        '204':
+          description: User deleted successfully.
+        '404':
+          description: User not found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "User with the specified ID not found."
+        '500':
+          description: Internal server error.
+
+  /login:
+    post:
+      summary: User login
+      description: Authenticates a user and returns a JWT token.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: user@example.com
+                password:
+                  type: string
+                  format: password
+                  example: P@ssw0rd!
+              required:
+                - email
+                - password
+      responses:
+        '200':
+          description: Successful authentication, returns JWT token.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        '401':
+          description: Unauthorized - Invalid credentials.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid email or password."
+        '400':
+          description: Bad Request - Missing fields.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Email is required."
+        '500':
+          description: Internal server error.
+
+  /forgot-password:
+    post:
+      summary: Password recovery
+      description: Sends a password recovery link to the user's email.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: user@example.com
+              required:
+                - email
+      responses:
+        '200':
+          description: Password recovery link sent successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Password recovery link has been sent to your email."
+        '404':
+          description: User not found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "No user found with the provided email."
+        '400':
+          description: Bad Request - Invalid email format.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid email format."
+        '500':
+          description: Internal server error.
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - bearerAuth: []

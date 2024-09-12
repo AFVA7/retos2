@@ -1,0 +1,42 @@
+
+
+services:
+  # Servicio de MongoDB
+  mongodb-user:
+    image: mongo:latest
+    container_name: mongodb-user
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    volumes:
+      - mongodb_data:/data/db
+      - mongodb_config:/data/configdb
+    networks:
+      - microservices-network
+
+  # Servicio de la API REST
+  api-rest-user:
+    container_name: api-rest-users
+    build:
+      context: ./api-rest-users/
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"  # Mapea el puerto 3000 del contenedor al puerto 3000 de tu máquina local
+    environment:
+      MONGO_URL: mongodb://root:example@mongodb:27017/users?authSource=admin
+    depends_on:
+      - mongodb-user
+    networks:
+      - microservices-network
+
+networks:
+  microservices-network:
+    driver: bridge
+
+volumes:
+  mongodb_data:
+    driver: local
+  mongodb_config:
+    driver: local
