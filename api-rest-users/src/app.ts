@@ -1,35 +1,15 @@
-import { setupSwagger } from "./swagger";
-
-const express = require('Express');
+const express = require('express');
 const cors = require('cors');
-const morgan = require('morgan');
-
-
+import userRoutes  from './routes/userRoutes';
+import {errorMiddleware} from './middlewares/errorMiddleware';
 
 const app = express();
-
-const PORT = process.env.PORT || 3000;
-
-
-
-// Configurar Swagger
-setupSwagger(app);
-
-//middlewares
 app.use(express.json());
 app.use(cors());
-app.use(morgan('dev'));
+// Rutas
+app.use('/api', userRoutes);
 
-app.get('/', (req: any , res:any) => {
-    res.send('Hello World');
-});
+// Middleware para manejar errores
+app.use(errorMiddleware);
 
-//app.use('/api/v1', require('./routes'));
-
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-});
-
-module.exports = app;
-
-
+export default app;

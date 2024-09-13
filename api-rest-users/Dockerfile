@@ -17,4 +17,4 @@ COPY ./src .
 EXPOSE 3000
 
 # Comando para iniciar la aplicación
-CMD ["npx", "ts-node", "app.ts"]
+CMD ["npx", "ts-node", "server.ts"]
