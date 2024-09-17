@@ -6,7 +6,7 @@ import { check } from 'express-validator';
 const router = Router();
 
 router.post(
-  '/',
+  '/users',
   [
     check('name').isLength({ min: 3 }),
     check('lastname').isLength({ min: 3 }),
@@ -16,18 +16,18 @@ router.post(
   registerUser
 );
 
-router.get('/:id', getUserById);
+router.get('/users/:id', getUserById);
 
-router.get('/', getUsers);
+router.get('/users/', getUsers);
 
-router.delete('/:id', authMiddleware, deleteUser);
+router.delete('/users/:id', authMiddleware, deleteUser);
 
 router.post('/login', [
     check('email').isEmail(),
     check('password').isLength({ min: 8 }),
 ], login);
 
-router.put('/:id',
+router.put('/users/:id',
     [
         check('name').isLength({ min: 3 }),
         check('lastname').isLength({ min: 3 }),

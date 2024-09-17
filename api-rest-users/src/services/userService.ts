@@ -63,6 +63,8 @@ export const userService = {
         if (!user || !(await bcrypt.compare(password, user.password))) {
             throw { status: 401, message: 'Invalid email or password' };
         }
+
+        console.log("🚀 ~ authMiddleware ~ secret:", jwtConfig.secret)
         const token = jwt.sign({ id: user._id, name: user.name, email: user.email }, jwtConfig.secret, { expiresIn: '48h' });
         return token;
     },

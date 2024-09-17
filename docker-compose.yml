@@ -26,6 +26,7 @@ services:
       - "3000:3000"  # Mapea el puerto 3000 del contenedor al puerto 3000 de tu máquina local
     environment:
       MONGO_URL: mongodb://root:example@mongodb-user:27017/users?authSource=admin
+      JWT_SECRET: secretTokenUsersUniquindioStivenAndres
     depends_on:
       - mongodb-user
     networks:
