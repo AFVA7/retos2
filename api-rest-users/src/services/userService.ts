@@ -82,28 +82,39 @@ export const userService = {
         };
     },
 
-    // forgotPassword: async (req: Request, res: Response) => {
-    //     const { email } = req.body;
-
-    //     if (!email) {
-    //         return res.status(400).json({ message: 'Email is required.' });
-    //     }
-
-    //     try {
-    //         const user = await User.findOne({ email });
-    //         if (!user) {
-    //             return res.status(404).json({ message: 'No user found with the provided email.' });
-    //         }
-
-    //         const resetToken = generateResetToken(user.id);
-    //         const resetLink = `https://yourfrontend.com/reset-password?token=${resetToken}`;
-
-    //         await sendResetEmail(user.email, resetLink);
-
-    //         res.status(200).json({ message: 'Password recovery link has been sent to your email.' });
-    //     } catch (error) {
-    //         res.status(500).json({ message: 'Internal server error.' });
-    //     }
-    // },
+  /**
+ * Función para crear un token de restablecimiento de contraseña
+ * @param {string} userId - El ID del usuario
+ * @param {string} userEmail - El correo del usuario
+ * @returns {string} - El token generado
+ */
+ createPasswordResetToken : (userId:string, userEmail:string) => {
+    // Crea el payload del token, puedes incluir la información necesaria
+    const payload = {
+      id: userId,
+      email: userEmail,
+    };
+  
+    // Genera el token con una expiración de 1 hora
+    const token = jwt.sign(payload, jwtConfig.secret, { expiresIn: '1h' });
+  
+    return token;
+  },
+  
+  /**
+   * Verifica la validez del token
+   * @param {string} token - El token a verificar
+   * @returns {Object|null} - Retorna los datos del token si es válido, o null si es inválido o expirado
+   */
+  verifyResetToken : (token: string) => {
+    try {
+      // Verifica y decodifica el token
+      const decoded = jwt.verify(token, jwtConfig.secret);
+      return decoded;
+    } catch (error: any) {
+      console.error('Token inválido o expirado:', error.message);
+      return null;
+    }
+  },
 
 };

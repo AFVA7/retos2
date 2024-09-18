@@ -27,6 +27,7 @@ services:
     environment:
       MONGO_URL: mongodb://root:example@mongodb-user:27017/users?authSource=admin
       JWT_SECRET: secretTokenUsersUniquindioStivenAndres
+      API_KEY_BREVO: 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
     depends_on:
       - mongodb-user
     networks:
